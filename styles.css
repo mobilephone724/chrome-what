@@ -20,34 +20,76 @@
   z-index: 10001;
   width: 400px;
   max-height: 400px;
-  background-color: white;
+  background-color: #fff;
+  color: #222;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  #what-is-it-popup {
+    background-color: #23272f;
+    color: #f1f1f1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+  }
+  #what-is-it-popup-header {
+    background-color: #11131a !important;
+    border-bottom: 1px solid #222 !important;
+    color: #eee !important;
+  }
+  #what-is-it-popup-title {
+    color: #eee !important;
+  }
+  #what-is-it-popup-close {
+    color: #bbb !important;
+  }
+  #what-is-it-popup-content {
+    background: transparent;
+    color: #f1f1f1;
+  }
+  #what-is-it-popup-content .loading {
+    color: #aaa;
+  }
+  #what-is-it-popup-content .error {
+    color: #ffb3b3;
+    background-color: #3a2323;
+  }
+  #what-is-it-popup-content .answer {
+    color: #f1f1f1;
+  }
+}
+
 #what-is-it-popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+  padding: 2px 10px;
   background-color: #f5f5f5;
   border-bottom: 1px solid #e0e0e0;
   cursor: move;
+  font-size: 12px;
+  min-height: 22px;
+  height: 28px;
+  transition: background 0.2s, color 0.2s;
 }
 
 #what-is-it-popup-title {
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #333;
 }
 
 #what-is-it-popup-close {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
-  color: #666;
+  color: #888;
+  padding: 0 2px;
+  line-height: 1;
 }
 
 #what-is-it-popup-content {
