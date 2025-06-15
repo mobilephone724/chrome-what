@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>What is it? - Settings</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3b78e7;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h2>What is it? - Settings</h2>
+  <div class="form-group">
+    <label for="api-key">ChatGPT API Key:</label>
+    <input type="password" id="api-key" placeholder="Enter your ChatGPT API key">
+  </div>
+  <button id="save-button">Save</button>
+  <div id="status" class="status" style="display: none;"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

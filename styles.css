@@ -1,0 +1,77 @@
+#what-is-it-button {
+  position: absolute;
+  z-index: 10000;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#what-is-it-button:hover {
+  background-color: #3b78e7;
+}
+
+#what-is-it-popup {
+  position: absolute;
+  z-index: 10001;
+  width: 400px;
+  max-height: 400px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#what-is-it-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: move;
+}
+
+#what-is-it-popup-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#what-is-it-popup-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+#what-is-it-popup-content {
+  padding: 15px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+#what-is-it-popup-content .loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  color: #666;
+}
+
+#what-is-it-popup-content .error {
+  color: #d32f2f;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+}
+
+#what-is-it-popup-content .answer {
+  line-height: 1.5;
+  font-size: 14px;
+}
