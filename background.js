@@ -1,53 +1,100 @@
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'whatIsIt',
+    title: 'What is it? (Ask ChatGPT)',
+    contexts: ['selection']
+  });
+});
+
+// Check if content script is already injected and avoid multiple injections
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'whatIsIt' && info.selectionText) {
+    // First check if the content script is already available
+    chrome.tabs.sendMessage(tab.id, { action: 'ping' }, response => {
+      if (response && response.pong) {
+        // Content script is already there, just send the message
+        chrome.tabs.sendMessage(tab.id, {
+          action: 'showWhatIsItPopup',
+          selection: info.selectionText
+        });
+      } else {
+        // Inject the content script since it's not available yet
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content.js']
+        }, () => {
+          setTimeout(() => {
+            chrome.tabs.sendMessage(tab.id, {
+              action: 'showWhatIsItPopup',
+              selection: info.selectionText
+            });
+          }, 100);
+        });
+      }
+    });
+  }
+});
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'askChatGPT') {
+    console.log('Background received askChatGPT request:', request.query);
+    
     chrome.storage.sync.get(['apiKey'], function(result) {
       if (!result.apiKey) {
+        console.log('No API key found');
         sendResponse({
           error: 'API key not found. Please set your ChatGPT API key in the extension settings.'
         });
         return;
       }
       
-	fetch('https://openrouter.ai/api/v1/chat/completions', {
-	  method: 'POST',
-	  headers: {
-		'Content-Type': 'application/json',
-		'Authorization': `Bearer ${result.apiKey}`,
-		'HTTP-Referer': chrome.runtime.getURL('/'),
-		'X-Title': 'Chrome Extension'
-	  },
-	  body: JSON.stringify({
-		model: 'google/gemini-2.0-flash-001',
-		messages: [
-		{
-		  role: 'user',
-		  content: request.query
-		}
-		],
-		max_tokens: 500
-	  })
-	})
-	.then(response => response.json())
-	.then(data => {
+      console.log('Making API request to OpenRouter');
+      
+      fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${result.apiKey}`,
+          'HTTP-Referer': chrome.runtime.getURL('/'),
+          'X-Title': 'Chrome Extension'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-001', 
+          messages: [
+            {
+              role: 'user',
+              content: request.query
+            }
+          ],
+          max_tokens: 500
+        })
+      })
+      .then(response => {
+        console.log('OpenRouter response status:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('API response data:', data);
         if (data.error) {
           sendResponse({
-            error: `Error from ChatGPT API: ${data.error.message}`
+            error: `Error from ChatGPT API: ${data.error.message || JSON.stringify(data.error)}`
           });
         } else {
           const answer = data.choices[0].message.content;
+          console.log('Answer received, sending response');
           sendResponse({
             answer: answer
           });
         }
       })
       .catch(error => {
+        console.error('API fetch error:', error);
         sendResponse({
           error: `Error: ${error.message}`
         });
       });
     });
     
-    // Return true to indicate you wish to send a response asynchronously
     return true;
   }
 });

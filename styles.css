@@ -59,6 +59,53 @@
   }
   #what-is-it-popup-content .answer {
     color: #f1f1f1;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    padding: 8px;
+  }
+  
+  #what-is-it-popup-content .answer code {
+    background-color: #252525;
+    color: #ff9cac;  /* Make inline code pop with a distinctive color */
+    border: 1px solid #444;
+  }
+  
+  #what-is-it-popup-content .answer pre {
+    background-color: #1a1a1a;
+    border: 1px solid #383838;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  #what-is-it-popup-content .answer a {
+    color: #7eb3ff;
+  }
+  
+  #what-is-it-popup-content .answer h1 {
+    border-color: #444;
+    color: #fff;
+  }
+  
+  #what-is-it-popup-content .answer h2,
+  #what-is-it-popup-content .answer h3 {
+    color: #fff;
+  }
+  
+  #what-is-it-popup-content .answer ul {
+    color: #e6e6e6;
+  }
+  
+  #what-is-it-popup-content .answer li {
+    margin-bottom: 5px;
+  }
+  
+  #what-is-it-popup-content .answer p {
+    color: #e6e6e6;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.7);
+  }
+  
+  /* Additional styling to ensure bold text is visible */
+  #what-is-it-popup-content .answer * strong {
+    color: #ffffff !important;
   }
 }
 
@@ -98,6 +145,34 @@
   overflow-y: auto;
 }
 
+/* Custom scrollbar for better visibility in dark mode */
+#what-is-it-popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+#what-is-it-popup-content::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+#what-is-it-popup-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+#what-is-it-popup-content::-webkit-scrollbar-thumb:hover {
+  background: #777; 
+}
+
+@media (prefers-color-scheme: dark) {
+  #what-is-it-popup-content::-webkit-scrollbar-thumb {
+    background: #555;
+  }
+  
+  #what-is-it-popup-content::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+}
+
 #what-is-it-popup-content .loading {
   display: flex;
   justify-content: center;
@@ -116,4 +191,125 @@
 #what-is-it-popup-content .answer {
   line-height: 1.5;
   font-size: 14px;
+}
+
+/* Markdown styles */
+#what-is-it-popup-content .answer h1 {
+  font-size: 18px;
+  margin: 12px 0 8px 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+#what-is-it-popup-content .answer h2 {
+  font-size: 16px;
+  margin: 10px 0 6px 0;
+}
+
+#what-is-it-popup-content .answer h3 {
+  font-size: 15px;
+  margin: 8px 0 4px 0;
+}
+
+#what-is-it-popup-content .answer p {
+  margin: 0 0 8px 0;
+}
+
+#what-is-it-popup-content .answer code {
+  background-color: #f0f0f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+#what-is-it-popup-content .answer pre {
+  background-color: #f5f5f5;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 8px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+#what-is-it-popup-content .answer pre code {
+  color: #d4d4d4;
+  background-color: transparent;
+  padding: 0;
+  display: block;
+  line-height: 1.5;
+}
+
+#what-is-it-popup-content .answer ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+#what-is-it-popup-content .answer li {
+  margin: 3px 0;
+  position: relative;
+}
+
+#what-is-it-popup-content .answer li::marker {
+  color: #666;
+}
+
+#what-is-it-popup-content .answer strong {
+  font-weight: 600;
+}
+
+#what-is-it-popup-content .answer em {
+  font-style: italic;
+}
+
+/* Add better styling for links */
+#what-is-it-popup-content .answer a {
+  color: #4285f4;
+  text-decoration: none;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+#what-is-it-popup-content .answer a:hover {
+  text-decoration: underline;
+  background-color: rgba(66, 133, 244, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  #what-is-it-popup-content .answer code {
+    background-color: #252525;
+    color: #ff9cac;  /* Make inline code pop with a distinctive color */
+    border: 1px solid #444;
+  }
+  
+  #what-is-it-popup-content .answer pre {
+    background-color: #1a1a1a;
+    border: 1px solid #383838;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  #what-is-it-popup-content .answer a {
+    color: #8ab4f8;
+    background-color: rgba(138, 180, 248, 0.1);
+    border-bottom: 1px solid rgba(138, 180, 248, 0.3);
+    text-decoration: none;
+  }
+  
+  #what-is-it-popup-content .answer a:hover {
+    background-color: rgba(138, 180, 248, 0.2);
+    border-bottom: 1px solid rgba(138, 180, 248, 0.6);
+  }
+  
+  /* Make bold text stand out better in dark mode */
+  #what-is-it-popup-content .answer strong {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 0.5px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Make italic text more visible */
+  #what-is-it-popup-content .answer em {
+    color: #ffcc80;
+    font-style: italic;
+  }
 }
