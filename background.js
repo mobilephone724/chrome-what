@@ -1,20 +1,38 @@
 chrome.runtime.onInstalled.addListener(() => {
+  // Create parent menu item
+  chrome.contextMenus.create({
+    id: 'askChatGPT',
+    title: 'Ask ChatGPT',
+    contexts: ['selection']
+  });
+  
+  // Create child menu items for different question types
   chrome.contextMenus.create({
     id: 'whatIsIt',
-    title: 'What is it? (Ask ChatGPT)',
+    parentId: 'askChatGPT',
+    title: 'What is it?',
+    contexts: ['selection']
+  });
+  
+  chrome.contextMenus.create({
+    id: 'summarizeIt',
+    parentId: 'askChatGPT',
+    title: 'Summarize this',
     contexts: ['selection']
   });
 });
 
 // Check if content script is already injected and avoid multiple injections
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'whatIsIt' && info.selectionText) {
+  // Handle multiple question types from the context menu
+  if ((info.menuItemId === 'whatIsIt' || info.menuItemId === 'summarizeIt') && info.selectionText) {
     // First check if the content script is already available
     chrome.tabs.sendMessage(tab.id, { action: 'ping' }, response => {
       if (response && response.pong) {
         // Content script is already there, just send the message
         chrome.tabs.sendMessage(tab.id, {
-          action: 'showWhatIsItPopup',
+          action: 'showChatGPTPopup',
+          questionType: info.menuItemId,
           selection: info.selectionText
         });
       } else {
@@ -25,7 +43,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }, () => {
           setTimeout(() => {
             chrome.tabs.sendMessage(tab.id, {
-              action: 'showWhatIsItPopup',
+              action: 'showChatGPTPopup',
+              questionType: info.menuItemId,
               selection: info.selectionText
             });
           }, 100);
