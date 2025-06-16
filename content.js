@@ -56,24 +56,29 @@
 
   // Listen for messages from background.js to trigger the popup
   chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log('Content script received message:', request.action);
+    
     // Add ping handler to check if content script is loaded
     if (request.action === 'ping') {
+      console.log('Ping received, responding with pong');
       sendResponse({ pong: true });
-      return;
+      return true; // Keep the message channel open
     }
     
     // Legacy support for old method
     if (request.action === 'showWhatIsItPopup' && request.selection) {
       showChatGPTPopup(request.selection, 'whatIsIt');
+      sendResponse({ success: true });
     }
     
     // New method with multiple question types
     if (request.action === 'showChatGPTPopup' && request.selection) {
       showChatGPTPopup(request.selection, request.questionType);
+      sendResponse({ success: true });
     }
     
-    // Make sure we return true to indicate we'll respond asynchronously
-    return true;
+    // We use return true only where we need asynchronous response
+    return false;
   });
 
   function showChatGPTPopup(selectedText, questionType) {
@@ -113,6 +118,13 @@
       function(response) {
         console.log('Received response:', response);
         
+        // Check for runtime errors first
+        if (chrome.runtime.lastError) {
+          console.error('Runtime error:', chrome.runtime.lastError);
+          popupContent.innerHTML = `<div class="error">Error: ${chrome.runtime.lastError.message}</div>`;
+          return;
+        }
+        
         if (!response) {
           popupContent.innerHTML = `<div class="error">No response received. Please check your API key and try again.</div>`;
           return;
@@ -124,9 +136,15 @@
           // Try to use the simple markdown parser
           try {
             console.log('Rendering with simpleMarkdown');
-            const renderedHtml = simpleMarkdown(response.answer);
-            popupContent.innerHTML = `<div class="answer">${renderedHtml}</div>`;
-            console.log('Rendered HTML:', renderedHtml);
+            // Check if simpleMarkdown function is available
+            if (typeof simpleMarkdown === 'function') {
+              const renderedHtml = simpleMarkdown(response.answer);
+              popupContent.innerHTML = `<div class="answer">${renderedHtml}</div>`;
+              console.log('Rendered HTML:', renderedHtml);
+            } else {
+              console.error('simpleMarkdown function not found');
+              popupContent.innerHTML = `<div class="answer">${response.answer}</div>`;
+            }
           } catch (e) {
             // Fallback to plain text if markdown parsing fails
             console.error('Error parsing markdown:', e);

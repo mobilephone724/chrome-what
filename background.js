@@ -27,30 +27,48 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   // Handle multiple question types from the context menu
   if ((info.menuItemId === 'whatIsIt' || info.menuItemId === 'summarizeIt') && info.selectionText) {
     // First check if the content script is already available
-    chrome.tabs.sendMessage(tab.id, { action: 'ping' }, response => {
-      if (response && response.pong) {
-        // Content script is already there, just send the message
-        chrome.tabs.sendMessage(tab.id, {
-          action: 'showChatGPTPopup',
-          questionType: info.menuItemId,
-          selection: info.selectionText
-        });
-      } else {
-        // Inject the content script since it's not available yet
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['content.js']
-        }, () => {
-          setTimeout(() => {
-            chrome.tabs.sendMessage(tab.id, {
-              action: 'showChatGPTPopup',
-              questionType: info.menuItemId,
-              selection: info.selectionText
-            });
-          }, 100);
-        });
-      }
-    });
+    try {
+      chrome.tabs.sendMessage(tab.id, { action: 'ping' }, response => {
+        if (chrome.runtime.lastError) {
+          console.log('Content script not ready:', chrome.runtime.lastError.message);
+          // Inject the content script since it's not available yet
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['simple-markdown.js', 'content.js']
+          }, () => {
+            if (chrome.runtime.lastError) {
+              console.error('Error injecting content script:', chrome.runtime.lastError);
+              return;
+            }
+            // Wait a bit longer to ensure content script is fully initialized
+            setTimeout(() => {
+              chrome.tabs.sendMessage(tab.id, {
+                action: 'showChatGPTPopup',
+                questionType: info.menuItemId,
+                selection: info.selectionText
+              }, () => {
+                if (chrome.runtime.lastError) {
+                  console.log('Message sending error:', chrome.runtime.lastError);
+                }
+              });
+            }, 300);
+          });
+        } else if (response && response.pong) {
+          // Content script is already there, just send the message
+          chrome.tabs.sendMessage(tab.id, {
+            action: 'showChatGPTPopup',
+            questionType: info.menuItemId,
+            selection: info.selectionText
+          }, () => {
+            if (chrome.runtime.lastError) {
+              console.log('Message sending error:', chrome.runtime.lastError);
+            }
+          });
+        }
+      });
+    } catch (e) {
+      console.error('Error checking content script status:', e);
+    }
   }
 });
 
@@ -58,6 +76,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === 'askChatGPT') {
     console.log('Background received askChatGPT request:', request.query);
     
+    // Keep the message channel open for the asynchronous response
     chrome.storage.sync.get(['apiKey'], function(result) {
       if (!result.apiKey) {
         console.log('No API key found');
